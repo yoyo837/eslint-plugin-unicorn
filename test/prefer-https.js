@@ -43,6 +43,13 @@ ruleTest.snapshot({
 		'const element = <a href="https://sindresorhus.com">https://sindresorhus.com</a>;',
 		`// eslint-disable-next-line rule-to-test/prefer-https
 		// http://sindresorhus.com`,
+		// XML namespace URIs should be ignored
+		'const svg = `<svg xmlns="http://www.w3.org/2000/svg"></svg>`;',
+		`const element = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+			<path d="M12 2L2 22h20L12 2z" />
+		</svg>;`,
+		'const html = `<html xmlns="http://www.w3.org/1999/xhtml"></html>`;',
+		'const custom = `<my:tag xmlns:ns="http://example.com/ns"></my:tag>`;',
 	],
 	invalid: [
 		'const url = "http://sindresorhus.com";',

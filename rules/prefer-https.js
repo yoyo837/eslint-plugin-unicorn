@@ -25,6 +25,14 @@ function hasPublicTld(hostname) {
 	return parts.length > 1 && /[a-z]/iu.test(tld);
 }
 
+// XML namespace URIs (e.g. xmlns="http://www.w3.org/2000/svg") are identifiers
+// defined by specs, not network addresses. Changing http to https may break
+// namespace resolution in strict XML/HTML parsers.
+function isXmlNamespaceUri(text, matchIndex) {
+	const preceding = text.slice(Math.max(0, matchIndex - 20), matchIndex);
+	return /xmlns(?::\w+)?\s*=\s*["']?$/i.test(preceding);
+}
+
 function shouldReport(authority) {
 	const hostname = getHostname(authority);
 
@@ -47,6 +55,10 @@ const create = context => {
 
 		for (const match of text.matchAll(HTTP_URL)) {
 			if (!shouldReport(match.groups.authority)) {
+				continue;
+			}
+
+			if (isXmlNamespaceUri(text, match.index)) {
 				continue;
 			}
 
